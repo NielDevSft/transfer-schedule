@@ -4,19 +4,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
 
 @Table(name="transacao")
 @Entity(name="transacao")
 public class Transacao extends BaseEntity {
-		@Column(name = "uuid_usuario")
-		public UUID uuidUsuario;
-		@Column(name = "cod_conta_origem")
-		public String codContaOrigem;
-		@Column(name = "cod_conta_destino")
-		public String codContaDestino;
 		@Column(name = "num_val_transferencia")
 		public BigDecimal numValTransferencia;
 		@Column(name = "num_val_taxa_prevista")
@@ -24,4 +17,15 @@ public class Transacao extends BaseEntity {
 		@Column(name = "dta_transacao")
 		public Date dtaTransacao;
 
+		@ManyToOne(fetch = FetchType.LAZY)
+		@JoinColumn(name = "conta_origem_uuid") // Mapeamento para a chave estrangeira da conta de origem
+		private Conta contaOrigem;
+
+		@ManyToOne(fetch = FetchType.LAZY)
+		@JoinColumn(name = "conta_destino_uuid") // Mapeamento para a chave estrangeira da conta de destino
+		private Conta contaDestino;
+
+		@ManyToOne(fetch = FetchType.LAZY)
+		@JoinColumn(name = "usuario_transacao_uuid")
+		public Usuario usuario;
 }

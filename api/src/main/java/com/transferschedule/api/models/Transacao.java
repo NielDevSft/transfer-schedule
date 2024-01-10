@@ -23,6 +23,8 @@ public class Transacao extends BaseEntity {
     @Column(name = "dta_transacao")
     public Date dtaTransacao;
 
+    public TIPOOPERACAO indTipoOperacao;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conta_origem_uuid") // Mapeamento para a chave estrangeira da conta de origem
     private Conta contaOrigem;

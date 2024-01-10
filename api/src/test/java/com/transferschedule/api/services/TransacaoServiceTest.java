@@ -1,9 +1,6 @@
 package com.transferschedule.api.services;
 
-import com.transferschedule.api.models.Cliente;
-import com.transferschedule.api.models.Conta;
-import com.transferschedule.api.models.Transacao;
-import com.transferschedule.api.models.Usuario;
+import com.transferschedule.api.models.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,6 +80,106 @@ public class TransacaoServiceTest {
         usuario.setHashPassword(hashPassword);
         return usuario;
     }
+
+    public void should_be_able_to_calculate_taxa_operacao_a() {
+        this.transacaoValida1.setIndTipoOperacao(TIPOOPERACAO.A);
+
+        // Act
+        Transacao transacaoCriada = transacaoService.create(transacaoValida1);
+
+        // Assertions
+        Assertions.assertEquals(transacaoCriada.getDtaTransacao(), transacaoCriada.getDtaCreateAt());
+        var valTaxaFixa = BigDecimal.valueOf(3);
+        var valTaxaVariavel = transacaoCriada.getNumValTransferencia()
+                .divide(BigDecimal.valueOf(0.03));
+        Assertions.assertEquals(valTaxaFixa.add(valTaxaVariavel), transacaoCriada.getNumValTaxaPrevista());
+    }
+
+    public void should_be_able_to_calculate_taxa_operacao_b() {
+        this.transacaoValida1.setIndTipoOperacao(TIPOOPERACAO.B);
+
+        // Act
+        Transacao transacaoCriada = transacaoService.create(transacaoValida1);
+
+        // Assertions
+        long diferencaMillis = Math
+                .abs(transacaoCriada
+                        .getDtaTransacao().getTime() -
+                        transacaoCriada
+                                .getDtaCreateAt().getTime());
+        long diferencaDias = diferencaMillis / (24 * 60 * 60 * 1000);
+
+        Assertions.assertTrue(diferencaDias <= 10);
+        var valTaxaFixa = BigDecimal.valueOf(12);
+        Assertions.assertEquals(valTaxaFixa, transacaoCriada.getNumValTaxaPrevista());
+    }
+
+    public void should_be_able_to_calculate_taxa_operacao_c() {
+        this.transacaoValida1.setIndTipoOperacao(TIPOOPERACAO.C);
+
+        // Act
+        Transacao transacaoCriada = transacaoService.create(transacaoValida1);
+        // Assertions
+        long diferencaMillis = Math
+                .abs(transacaoCriada
+                        .getDtaTransacao().getTime() -
+                        transacaoCriada
+                                .getDtaCreateAt().getTime());
+        long diferencaDias = diferencaMillis / (24 * 60 * 60 * 1000);
+        var valTaxaVariavel = BigDecimal.ZERO;
+
+        if (diferencaDias > 10 && diferencaDias < 20) {
+            valTaxaVariavel = transacaoCriada.getNumValTransferencia()
+                    .divide(BigDecimal.valueOf(0.082));
+        }
+        else if(diferencaDias > 20 && diferencaDias < 30) {
+            valTaxaVariavel = transacaoCriada.getNumValTransferencia()
+                    .divide(BigDecimal.valueOf(0.069));
+        } else if (diferencaDias > 30 && diferencaDias < 40) {
+            valTaxaVariavel = transacaoCriada.getNumValTransferencia()
+                    .divide(BigDecimal.valueOf(0.047));
+        }else {
+            valTaxaVariavel = transacaoCriada.getNumValTransferencia()
+                    .divide(BigDecimal.valueOf(0.017));
+        }
+
+        Assertions.assertTrue(
+                valTaxaVariavel.equals(transacaoCriada.getNumValTaxaPrevista()));
+    }
+
+    public void should_be_able_to_calculate_taxa_operacao_d() {
+        this.transacaoValida1.setIndTipoOperacao(TIPOOPERACAO.D);
+
+        // Define os valores de referência para as faixas de taxação
+        BigDecimal valorLimiteA = BigDecimal.valueOf(1000);
+        BigDecimal valorLimiteB = BigDecimal.valueOf(2000);
+
+        // Obtém o valor da transferência
+        BigDecimal valorTransferencia = transacaoValida1.getNumValTransferencia();
+
+        // Define a taxa inicial
+        BigDecimal taxaCalculada;
+
+        // Calcula a taxa com base nos valores especificados
+        if (valorTransferencia.compareTo(valorLimiteA) <= 0) {
+            // Valor até $1.000 - segue taxação tipo A
+            taxaCalculada = valorTransferencia.divide(BigDecimal.valueOf(0.05));
+        } else if (valorTransferencia.compareTo(valorLimiteB) <= 0) {
+            // Valor entre $1.001 e $2.000 - segue taxação tipo B
+            taxaCalculada = valorTransferencia.divide(BigDecimal.valueOf(0.04));
+        } else {
+            // Valor acima de $2.000 - segue taxação tipo C
+            taxaCalculada = valorTransferencia.divide(BigDecimal.valueOf(0.03));
+        }
+
+        // Realiza a criação da transação
+        Transacao transacaoCriada = transacaoService.create(transacaoValida1);
+
+        // Assertions
+        Assertions.assertEquals(taxaCalculada, transacaoCriada.getNumValTaxaPrevista());
+    }
+
+
 
     private Cliente criarCliente(Usuario usuario, int categoriaPlano) {
         Cliente cliente = new Cliente();

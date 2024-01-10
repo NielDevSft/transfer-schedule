@@ -2,10 +2,9 @@ package com.transferschedule.api.models;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.UUID;
 
+import com.transferschedule.api.enums.TIPOOPERACAO;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

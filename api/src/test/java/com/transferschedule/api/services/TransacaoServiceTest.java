@@ -1,5 +1,6 @@
 package com.transferschedule.api.services;
 
+import com.transferschedule.api.enums.TIPOOPERACAO;
 import com.transferschedule.api.models.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import org.junit.jupiter.api.function.Executable;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -64,6 +67,7 @@ public class TransacaoServiceTest {
 
     @Test
     public void should_be_able_to_create_a_new_transacao() {
+        transacaoValida1.setIndTipoOperacao(TIPOOPERACAO.A);
         // Act
         Transacao transacaoCriada = transacaoService.create(transacaoValida1);
         // Assert
@@ -90,8 +94,7 @@ public class TransacaoServiceTest {
         // Assertions
         Assertions.assertEquals(transacaoCriada.getDtaTransacao(), transacaoCriada.getDtaCreateAt());
         var valTaxaFixa = BigDecimal.valueOf(3);
-        var valTaxaVariavel = transacaoCriada.getNumValTransferencia()
-                .divide(BigDecimal.valueOf(0.03));
+        var valTaxaVariavel = transacaoCriada.getNumValTransferencia().divide(BigDecimal.valueOf(0.03));
         Assertions.assertEquals(valTaxaFixa.add(valTaxaVariavel), transacaoCriada.getNumValTaxaPrevista());
     }
 
@@ -102,11 +105,7 @@ public class TransacaoServiceTest {
         Transacao transacaoCriada = transacaoService.create(transacaoValida1);
 
         // Assertions
-        long diferencaMillis = Math
-                .abs(transacaoCriada
-                        .getDtaTransacao().getTime() -
-                        transacaoCriada
-                                .getDtaCreateAt().getTime());
+        long diferencaMillis = Math.abs(transacaoCriada.getDtaTransacao().getTime() - transacaoCriada.getDtaCreateAt().getTime());
         long diferencaDias = diferencaMillis / (24 * 60 * 60 * 1000);
 
         Assertions.assertTrue(diferencaDias <= 10);
@@ -120,31 +119,21 @@ public class TransacaoServiceTest {
         // Act
         Transacao transacaoCriada = transacaoService.create(transacaoValida1);
         // Assertions
-        long diferencaMillis = Math
-                .abs(transacaoCriada
-                        .getDtaTransacao().getTime() -
-                        transacaoCriada
-                                .getDtaCreateAt().getTime());
+        long diferencaMillis = Math.abs(transacaoCriada.getDtaTransacao().getTime() - transacaoCriada.getDtaCreateAt().getTime());
         long diferencaDias = diferencaMillis / (24 * 60 * 60 * 1000);
         var valTaxaVariavel = BigDecimal.ZERO;
 
         if (diferencaDias > 10 && diferencaDias < 20) {
-            valTaxaVariavel = transacaoCriada.getNumValTransferencia()
-                    .divide(BigDecimal.valueOf(0.082));
-        }
-        else if(diferencaDias > 20 && diferencaDias < 30) {
-            valTaxaVariavel = transacaoCriada.getNumValTransferencia()
-                    .divide(BigDecimal.valueOf(0.069));
+            valTaxaVariavel = transacaoCriada.getNumValTransferencia().divide(BigDecimal.valueOf(0.082));
+        } else if (diferencaDias > 20 && diferencaDias < 30) {
+            valTaxaVariavel = transacaoCriada.getNumValTransferencia().divide(BigDecimal.valueOf(0.069));
         } else if (diferencaDias > 30 && diferencaDias < 40) {
-            valTaxaVariavel = transacaoCriada.getNumValTransferencia()
-                    .divide(BigDecimal.valueOf(0.047));
-        }else {
-            valTaxaVariavel = transacaoCriada.getNumValTransferencia()
-                    .divide(BigDecimal.valueOf(0.017));
+            valTaxaVariavel = transacaoCriada.getNumValTransferencia().divide(BigDecimal.valueOf(0.047));
+        } else {
+            valTaxaVariavel = transacaoCriada.getNumValTransferencia().divide(BigDecimal.valueOf(0.017));
         }
 
-        Assertions.assertTrue(
-                valTaxaVariavel.equals(transacaoCriada.getNumValTaxaPrevista()));
+        Assertions.assertTrue(valTaxaVariavel.equals(transacaoCriada.getNumValTaxaPrevista()));
     }
 
     public void should_be_able_to_calculate_taxa_operacao_d() {
@@ -178,7 +167,6 @@ public class TransacaoServiceTest {
         // Assertions
         Assertions.assertEquals(taxaCalculada, transacaoCriada.getNumValTaxaPrevista());
     }
-
 
 
     private Cliente criarCliente(Usuario usuario, int categoriaPlano) {

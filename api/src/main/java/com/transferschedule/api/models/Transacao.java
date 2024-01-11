@@ -15,6 +15,8 @@ import lombok.Setter;
 @Table(name = "transacao")
 @Entity(name = "transacao")
 public class Transacao extends BaseEntity {
+    @Column(name = "cod_transacao")
+    public long codTransacao;
     @Column(name = "num_val_transferencia")
     public BigDecimal numValTransferencia;
     @Column(name = "num_val_taxa_prevista")

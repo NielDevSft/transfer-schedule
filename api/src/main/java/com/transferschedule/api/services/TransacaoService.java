@@ -1,6 +1,7 @@
 package com.transferschedule.api.services;
 
 import com.transferschedule.api.enums.TIPOOPERACAO;
+import com.transferschedule.api.models.Cliente;
 import com.transferschedule.api.models.Transacao;
 import com.transferschedule.api.repositories.TransacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,15 @@ public class TransacaoService {
     TransacaoRepository transacaoRepository;
 
     public Transacao create(Transacao transacao) {
+        transacao.isValid();
+
+        var lastCreated = this.findLastCreate();
+        transacao.setCodTransacao(1);
+
+        lastCreated.ifPresent(tra ->
+                transacao.setCodTransacao(tra.getCodTransacao() + 1
+                ));
+
         LocalDate hoje = LocalDate.now();
         transacao.setDtaTransacao(new Date());
         long diferencaDias = calcularDiferencaDias(transacao.getDtaTransacao(), hoje);
@@ -44,6 +54,9 @@ public class TransacaoService {
         }
 
         return transacaoRepository.save(transacao);
+    }
+    public Optional<Transacao> findLastCreate(){
+        return this.transacaoRepository.findFirstByOrderByDtaCreateAtDesc();
     }
 
     private Optional<TIPOOPERACAO> calcularTipoOperacao(Transacao transacao, long diferencaDias) {

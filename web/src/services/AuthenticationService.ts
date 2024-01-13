@@ -1,13 +1,31 @@
-import Axios from "axios-observable";
-import { retry } from "rxjs";
+import { UserWithAuthorities } from "@/models/userWithAuthorities";
 
-export class DogInfoService {
-  getDogFacts(id: number) {
-    return Axios.get(`/dog-fact?ID=${id}`)
-      .pipe(retry(3))
-      .subscribe({
-        next: (response) => console.log(response),
-        error: (error) => console.log(error),
+import axios, { AxiosResponse } from "axios";
+
+export class AuthenticationService {
+  url = "http://localhost:8080/authentication";
+
+  public async login(
+    userName: string,
+    passWord: string,
+  ): Promise<AxiosResponse<UserWithAuthorities>> {
+    const basicKey = "Basic " + btoa(userName + ":" + passWord);
+    sessionStorage.setItem("basicKey", basicKey);
+
+    return axios
+      .post<UserWithAuthorities>(
+        `${this.url}/login`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: basicKey,
+          },
+        },
+      )
+      .catch((e) => {
+        sessionStorage.removeItem("basicKey");
+        throw e;
       });
   }
 }

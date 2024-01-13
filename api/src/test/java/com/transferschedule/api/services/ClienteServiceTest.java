@@ -1,7 +1,7 @@
 package com.transferschedule.api.services;
 
 import com.transferschedule.api.models.Cliente;
-import com.transferschedule.api.models.Usuario;
+import com.transferschedule.api.models.authentication.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,18 +20,15 @@ public class ClienteServiceTest {
     private ClienteService clienteService;
 
     @Autowired
-    private UsuarioService usuarioService;
+    private AuthenticationService authenticationService;
 
-    private Usuario usuarioValido1;
-    private Usuario usuarioValido2;
+    private User usuarioValido1;
+    private User usuarioValido2;
 
     @BeforeEach
     public void setUp() {
-        usuarioValido1 = criarUsuario("Daniel Figueiredo", "daniel.silva1313@gmail.com", 1, "938c2cc0dcc05f2b68c4287040cfcf71");
-        usuarioValido2 = criarUsuario("Daniel S Figueiredo", "daniel.jefinho@gmail.com", 1, "938c2cc0dcc05f2b68c4287040cfcf71");
-
-        usuarioValido1 = usuarioService.create(usuarioValido1);
-        usuarioValido2 = usuarioService.create(usuarioValido2);
+        usuarioValido1 = criarUsuario("daniel.silva1313@gmail.com",  "{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW");
+        usuarioValido2 = criarUsuario( "daniel.jefinho@gmail.com",  "{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW");
     }
 
     @Test
@@ -77,18 +74,18 @@ public class ClienteServiceTest {
         Assertions.assertEquals("O usuario é obrigatório para a criação de clientes", exception.getMessage());
     }
 
-    private Usuario criarUsuario(String nome, String email, int role, String hashPassword) {
-        Usuario usuario = new Usuario();
-        usuario.setDesNome(nome);
-        usuario.setDesEmail(email);
-        usuario.setCodRole(role);
-        usuario.setHashPassword(hashPassword);
-        return usuario;
+    private User criarUsuario(String email, String hashPassword) {
+        User usuario = new User();
+        usuario.setUsername(email);
+        usuario.setPassword(hashPassword);
+
+        authenticationService.create(usuario);
+        return  authenticationService.create(usuario);
     }
 
-    private Cliente criarCliente(Usuario usuario, int categoriaPlano) {
+    private Cliente criarCliente(User usuario, int categoriaPlano) {
         Cliente cliente = new Cliente();
-        cliente.setCategoriaPlano(categoriaPlano);
+
         cliente.setUsuairo(usuario);
         return cliente;
     }

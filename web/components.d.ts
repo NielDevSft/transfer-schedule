@@ -7,19 +7,20 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    AppBar: typeof import('./src/components/commom/AppBar.vue')['default']
-    Form: typeof import('./src/components/Transacoes/Form.vue')['default']
-    FormModal: typeof import('./src/components/Transacao/FormModal.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
-    Index: typeof import('./src/components/Transacao/Index.vue')['default']
+    AppBar: (typeof import("./src/components/commom/AppBar.vue"))["default"]
+    ClienteForm: typeof import('./src/components/cliente/ClienteForm.vue')['default']
+    Form: typeof import('./src/components/transacao/Form.vue')['default']
+    FormModal: typeof import('./src/components/transacao/FormModal.vue')['default']
+    HelloWorld: (typeof import("./src/components/HelloWorld.vue"))["default"]
+    Index: typeof import('./src/components/cliente/Index.vue')['default']
     Login: typeof import('./src/components/Login.vue')['default']
     MainContainer: typeof import('./src/components/commom/MainContainer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ToolBar: typeof import('./src/components/commom/ToolBar.vue')['default']
-    TopBar: typeof import('./src/components/commom/TopBar.vue')['default']
-    Transacoe: typeof import('./src/components/Transacao/Transacoe.vue')['default']
-    Transacoes: typeof import('./src/components/Transacoes/Transacoes.vue')['default']
-    Transanacoes: typeof import('./src/components/Transacoes/Transanacoes.vue')['default']
+    TopBar: (typeof import("./src/components/commom/TopBar.vue"))["default"]
+    Transacoe: (typeof import("./src/components/Transacao/Transacoe.vue"))["default"]
+    Transacoes: (typeof import("./src/components/Transacoes/Transacoes.vue"))["default"]
+    Transanacoes: (typeof import("./src/components/Transacoes/Transanacoes.vue"))["default"]
   }
 }

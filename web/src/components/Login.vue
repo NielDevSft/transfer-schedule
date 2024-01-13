@@ -9,12 +9,12 @@
           <v-card-text v-if="isLogin">
             <v-form @submit.prevent>
               <v-text-field
-                v-model="email"
+                v-model="emailLogin"
                 :rules="rules"
                 label="Email"
               ></v-text-field>
               <v-text-field
-                v-model="password"
+                v-model="passwordLogin"
                 :rules="rules"
                 label="Senha"
               ></v-text-field>
@@ -42,7 +42,13 @@
           </v-card-text>
 
           <v-card-actions v-if="isLogin">
-            <v-btn v-if="isLogin" type="submit" class="mt-2">Login</v-btn>
+            <v-btn
+              v-if="isLogin"
+              type="submit"
+              v-on:click="onLogin()"
+              class="mt-2"
+              >Login</v-btn
+            >
             <v-btn type="submit" class="mt-2" v-on:click="isLogin = !isLogin"
               >Criar usuario</v-btn
             >
@@ -60,12 +66,31 @@
 </template>
 
 <script>
-import { ref, reactive } from "vue";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthenticationStore } from "@/stores/authenticationStore";
 
 export default {
   setup() {
+    const userStore = useAuthenticationStore();
+    const router = useRouter();
+    const isLogin = ref(true);
+    const emailLogin = ref("");
+    const passwordLogin = ref("");
+
+    const rules = ref([(v) => !!v || "Campo obrigatório"]);
+
+    const onLogin = async () => {
+      await userStore.login(emailLogin.value, passwordLogin.value);
+      router.push({ name: "main" });
+    };
+
     return {
-      isLogin: ref(true),
+      isLogin,
+      emailLogin,
+      passwordLogin,
+      onLogin,
+      rules,
     };
   },
 };

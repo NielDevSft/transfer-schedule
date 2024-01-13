@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -131,5 +132,9 @@ public class TransacaoService {
         }
 
         transacao.setNumValTaxaPrevista(taxaCalculada);
+    }
+
+    public List<Transacao> findAll() {
+        return this.transacaoRepository.findAll();
     }
 }

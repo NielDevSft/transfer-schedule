@@ -22,9 +22,13 @@ public class ClienteService {
         lastCreated.ifPresent(cli ->
             cliente.setCodCliente(cli.getCodCliente() + 1
         ));
+
         return this.clienteRepository.save(cliente);
     }
 
+    public Optional<Cliente> findByUsuarioId(long id){
+        return clienteRepository.findFirstByUsuairoId(id);
+    }
     public Optional<Cliente> findLastCreate(){
         return this.clienteRepository.findFirstByOrderByDtaCreateAtDesc();
     }

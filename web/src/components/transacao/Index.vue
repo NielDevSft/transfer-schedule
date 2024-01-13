@@ -20,7 +20,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in trasacoes" :key="item.uuid">
+        <tr v-for="item in data" :key="item.uuid">
           <td>{{ item.codTransacao }}</td>
           <td>{{ item.desNome }}</td>
           <td>{{ item.numContaOrigem }}</td>
@@ -35,7 +35,32 @@
 </template>
 
 <script>
-export default {};
+import { ref, onMounted } from "vue";
+import { TransacaoService } from "@/services/TransacaoService";
+
+export default {
+  setup() {
+    const data = ref([]);
+
+    const fetchData = async () => {
+      const traService = new TransacaoService();
+      try {
+        const response = await traService.getAll();
+        data.value = response.data;
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    };
+
+    onMounted(() => {
+      fetchData();
+    });
+
+    return {
+      data,
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped></style>

@@ -26,4 +26,8 @@ export class ContaService {
       this.config,
     );
   }
+
+  public async getByCodigo(cod: number): Promise<AxiosResponse<Conta>> {
+    return axios.get<Conta>(`${this.url}/get-by-cod/${cod}`, this.config);
+  }
 }

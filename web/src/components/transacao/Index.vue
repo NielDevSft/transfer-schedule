@@ -2,7 +2,13 @@
   <v-card>
     <v-card-title class="d-flex justify-space-between align-center">
       Trasações agendadas
-      <v-btn class="ml-2 text-end" left color="success" size="small">
+      <v-btn
+        class="ml-2 text-end"
+        left
+        color="success"
+        size="small"
+        v-on:click="goNovoUsuario()"
+      >
         <v-icon icon="$plus" size="x-small"></v-icon>
         Agendar transação</v-btn
       >
@@ -32,24 +38,25 @@
       </tbody>
     </v-table>
   </v-card>
+  <router-view></router-view>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
-import { TransacaoService } from "@/services/TransacaoService";
-
+import { useRouter } from "vue-router";
+import { useTransacaoStore } from "@stores/transacaoStore";
 export default {
   setup() {
-    const data = ref([]);
+    const router = useRouter();
+    const transacaoStore = useTransacaoStore();
+    const data = ref(transacaoStore.transacaoList.map((tra) => tra.transacao));
 
     const fetchData = async () => {
-      const traService = new TransacaoService();
-      try {
-        const response = await traService.getAll();
-        data.value = response.data;
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-      }
+      transacaoStore.getAll();
+    };
+    const goNovoUsuario = () => {
+      console.log("chegou");
+      router.push({ name: "transacao-novo" });
     };
 
     onMounted(() => {
@@ -58,6 +65,7 @@ export default {
 
     return {
       data,
+      goNovoUsuario,
     };
   },
 };

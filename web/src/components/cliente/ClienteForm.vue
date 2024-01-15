@@ -11,6 +11,7 @@
               <v-text-field
                 v-model="desNome"
                 label="Nome completo*"
+                value="Daniel Figuieredo"
                 required
               ></v-text-field>
             </v-col>
@@ -19,6 +20,7 @@
               <v-text-field
                 v-model="desCpf"
                 label="CPF*"
+                :value="47995274826"
                 required
               ></v-text-field>
             </v-col>
@@ -26,6 +28,7 @@
               <v-text-field
                 v-model="dataNascimento"
                 label="Data de nascimento*"
+                value="1999-08-02"
                 type="date"
                 required
               ></v-text-field>
@@ -33,6 +36,7 @@
             <v-col cols="12">
               <v-text-field
                 v-model="numTelefone"
+                value="11973829618"
                 label="Número de telefone*"
                 required
               ></v-text-field>
@@ -53,40 +57,39 @@
 </template>
 <script>
 import { ref, defineEmits } from "vue";
-import { ContaService } from "@services/ContaService";
-import Usuario, { Cliente } from "@/models/cliente";
+import { Cliente } from "@/models/cliente";
+import { useContaStore } from "@stores/contaStore";
+import { useClienteStore } from "@stores/clienteStore";
+import { useAuthenticationStore } from "@/stores/authenticationStore";
+import { useUtils } from "@/models/utils";
 
 export default {
   setup(props, { emit }) {
-    console.log();
+    const utils = useUtils();
+    const clienteStore = useClienteStore();
+    const authenticationStore = useAuthenticationStore();
+    const constaStore = useContaStore();
+
     const desNome = ref("");
     const desCpf = ref("");
     const dataNascimento = ref("");
     const numTelefone = ref("");
 
     const criarConta = async () => {
-      const contaService = new ContaService();
-      const userWA = JSON.parse(sessionStorage.getItem("userLogged"));
-
       const cli = new Cliente(
-        desCpf.value,
         desNome.value,
-        numTelefone.value,
-        userWA.user.id,
-        {},
-        dataNascimento.value,
+        desCpf.value,
+        utils.convertStringToDate(dataNascimento.value),
+        authenticationStore.userCorrente,
       );
+      await constaStore.createPrimeiraConta(cli);
 
-      try {
-        const novaConta = await contaService.createPrimeiraConta(cli);
-        emitFecharModal();
-      } catch (e) {
-        console.log(e);
-      }
+      await clienteStore.setCliente(constaStore.contaCorrente.cliente);
+      emitFecharModal();
     };
 
     const emitFecharModal = () => {
-      emit("fecharModal", false); // Emite um evento para o pai
+      emit("fecharModal", false);
     };
     return {
       desNome,

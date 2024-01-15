@@ -29,6 +29,9 @@ public class ClienteService {
     public Optional<Cliente> findByUsuarioId(long id){
         return clienteRepository.findFirstByUsuairoId(id);
     }
+    public Optional<Cliente> findFirstByUsuairoUsername(String username){
+        return clienteRepository.findFirstByUsuairoUsername(username);
+    }
     public Optional<Cliente> findLastCreate(){
         return this.clienteRepository.findFirstByOrderByDtaCreateAtDesc();
     }

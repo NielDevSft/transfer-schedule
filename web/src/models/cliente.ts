@@ -1,14 +1,16 @@
 import { Usuario } from "./usuario";
 export class Cliente {
   constructor(
-    public desCpf: string,
-    public desNome: string,
-    public numTelefo: string,
-    public idUsuario: number,
-    public usuario: Usuario,
-    public dtaNascimento: Date,
+    public desNomeCompleto: string | null,
+    public desCpf: string | null,
+    public dtaNascimento: Date | null,
+    public usuairo: Usuario,
     public uuid?: string,
-    public codCliente?: string,
+    public codCliente?: number,
+    public dtaCreateAt?: Date,
+    public dtaUpdateAt?: Date,
+    public dtaDeleteAt?: Date | null,
+    public deleted?: boolean,
   ) {}
 }
 

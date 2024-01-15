@@ -38,6 +38,8 @@ public class Transacao extends BaseEntity {
     @JoinColumn(name = "cliente_responsavel_transacao_uuid")
     public Cliente cliente;
 
+
+
     @Override
     public void isValid() {
 

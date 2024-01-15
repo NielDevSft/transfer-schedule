@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @NoArgsConstructor()
@@ -28,7 +29,7 @@ public class Cliente extends BaseEntity {
     public String desCpf;
 
     @Column(name = "dta_nascimento")
-    public Date dtaNacimento;
+    public Date dtaNascimento;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_usuairo_uuid")

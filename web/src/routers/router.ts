@@ -1,8 +1,8 @@
-// router.ts
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Login from "../components/Login.vue";
-import Transasao from "../components/Transacao/Index.vue";
-import Form from "../components/Transacao/Form.vue";
+import Login from "@/components/Login.vue";
+import Transasao from "@/components/Transacao/Index.vue";
+import TransacaoForm from "@/components/transacao/TransacaoForm.vue";
+
 import MainContainer from "@/components/commom/MainContainer.vue";
 import { UserWithAuthorities } from "@/models/userWithAuthorities";
 
@@ -15,19 +15,23 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: "transacao",
-        name: "transacao",
-        component: Transasao,
-        meta: { roles: ["ROLE_USER", "ROLE_ADMIN"] },
         children: [
           {
-            path: "/novo",
-            name: "transacao/novo",
-            component: Form,
+            path: "novo",
+            name: "transacao-novo",
+            component: TransacaoForm,
             meta: { roles: ["ROLE_USER", "ROLE_ADMIN"] },
           },
           {
-            path: "/edit",
-            component: Form,
+            path: "edit",
+            name: "transacao-edit",
+            component: TransacaoForm,
+            meta: { roles: ["ROLE_USER", "ROLE_ADMIN"] },
+          },
+          {
+            path: "",
+            name: "transacao",
+            component: Transasao,
             meta: { roles: ["ROLE_USER", "ROLE_ADMIN"] },
           },
         ],
@@ -51,12 +55,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  console.log(to.path);
   const userRoles = (
     JSON.parse(
       sessionStorage.getItem("userLogged") || "null",
     ) as UserWithAuthorities
   )?.authority;
-  console.log(userRoles);
 
   if (to.path === "/login") {
     if (userRoles && userRoles.length) {

@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
     Optional<Cliente> findFirstByOrderByDtaCreateAtDesc();
     Optional<Cliente> findFirstByUsuairoId(long id);
+    Optional<Cliente> findFirstByUsuairoUsername(String id);
 }

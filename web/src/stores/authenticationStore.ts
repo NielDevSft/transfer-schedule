@@ -12,32 +12,34 @@ export const useAuthenticationStore = defineStore("authentication", {
     ) as UserWithAuthorities;
 
     return {
-      userLogged:
+      userStore:
         userAuthenticated ||
-        new UserWithAuthorities(new Usuario(0, "", ""), [new Role(0, "")]),
+        new UserWithAuthorities(initUsuario, [new Role(0, "")]),
     };
   },
   actions: {
     async login(userName: string, passWord: string) {
       try {
         const response = await authenticationService.login(userName, passWord);
-        this.userLogged = response.data;
+        this.userStore = response.data;
         sessionStorage.setItem("userLogged", JSON.stringify(response.data));
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       }
     },
     logout() {
-      this.userLogged = new UserWithAuthorities(new Usuario(0, "", ""), [
-        new Role(0, ""),
-      ]);
+      this.userStore = new UserWithAuthorities(initUsuario, [new Role(0, "")]);
       sessionStorage.clear();
     },
   },
 
   getters: {
     rolesList(): string[] {
-      return this.userLogged.authority.map((rol) => rol.authority);
+      return this.userStore.authority.map((rol) => rol.authority);
+    },
+    userCorrente(): Usuario {
+      return this.userStore.user;
     },
   },
 });
+const initUsuario = new Usuario(0, "", "", true);

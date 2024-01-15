@@ -19,6 +19,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ToolBar: typeof import('./src/components/commom/ToolBar.vue')['default']
     TopBar: (typeof import("./src/components/commom/TopBar.vue"))["default"]
+    TransacaoForm: typeof import('./src/components/transacao/TransacaoForm.vue')['default']
     Transacoe: (typeof import("./src/components/Transacao/Transacoe.vue"))["default"]
     Transacoes: (typeof import("./src/components/Transacoes/Transacoes.vue"))["default"]
     Transanacoes: (typeof import("./src/components/Transacoes/Transanacoes.vue"))["default"]

@@ -18,7 +18,7 @@ export default {
     const authStore = useAuthenticationStore();
 
     onMounted(() => {
-      clienteStore.getClienteByUsuario(authStore.userLogged.user.id);
+      clienteStore.getClienteByUsuario(authStore.userStore.user.id);
     });
 
     return {};

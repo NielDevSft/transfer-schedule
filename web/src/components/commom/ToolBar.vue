@@ -32,15 +32,15 @@
                   v-model="contaSelecionada"
                   :items="contaStore.contaList"
                   label="Tipo de Operação"
-                  item-title="uuid"
+                  item-title="contaLabel"
                   item-value="uuid"
                 ></v-select>
               </v-card-text>
               <v-card-actions>
-                <v-btn color="red" v-on:click="isActive = false"
+                <v-btn color="red" v-on:click="fecharModal(isActive)"
                   >Cancelar</v-btn
                 >
-                <v-btn color="red" v-on:click="onSelectConta()">
+                <v-btn color="red" v-on:click="onSelectConta(isActive)">
                   Selecionar
                 </v-btn>
               </v-card-actions>
@@ -88,8 +88,8 @@ export default {
     const goTransacao = () => {
       router.push({ name: "transacao" });
     };
-    const onSelectConta = () => {
-      console.log(contaSelecionada);
+    const onSelectConta = (isActive) => {
+      fecharModal(isActive);
       contaStore.setContaCorrete(contaSelecionada.value);
     };
 

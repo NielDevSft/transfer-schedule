@@ -9,5 +9,6 @@ export class Conta {
     public dtaDeleteAt: Date | null,
     public codConta: number,
     public cliente: Cliente,
+    public contaLabel?: string,
   ) {}
 }

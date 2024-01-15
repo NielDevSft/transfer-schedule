@@ -1,11 +1,13 @@
 import { Cliente } from "@/models/cliente";
 import { Conta } from "@/models/conta";
 import Usuario from "@/models/usuario";
+import { useUtils } from "@/models/utils";
 import { ContaService } from "@/services/ContaService";
 import { defineStore } from "pinia";
+import { util } from "prettier";
 
 const contaService = new ContaService();
-
+const utils = useUtils();
 export const useContaStore = defineStore("conta", {
   state() {
     const contaCorrente = JSON.parse(
@@ -24,7 +26,17 @@ export const useContaStore = defineStore("conta", {
     async createPrimeiraConta(cliente: Cliente) {
       try {
         const response = await contaService.createPrimeiraConta(cliente);
-        this.contaStore = [{ conta: response.data, selected: true }];
+        this.contaStore = [
+          {
+            conta: {
+              ...response.data,
+              contaLabel: utils.formatarNumeroConta(
+                response.data.codConta.toString(),
+              ),
+            },
+            selected: true,
+          },
+        ];
         sessionStorage.setItem("contaCorrente", JSON.stringify(response.data));
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -34,7 +46,13 @@ export const useContaStore = defineStore("conta", {
       try {
         const response = await contaService.getAllByCliente(uuid);
         this.contaStore = response.data.map((con) => {
-          return { conta: con, selected: false };
+          return {
+            conta: {
+              ...con,
+              contaLabel: utils.formatarNumeroConta(con.codConta.toString()),
+            },
+            selected: false,
+          };
         });
       } catch (error) {
         console.error("Erro ao buscar dados:", error);

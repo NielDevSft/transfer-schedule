@@ -34,4 +34,4 @@ export const useClienteStore = defineStore("cliente", {
 });
 
 const usuario = new Usuario(0, "", "", true);
-const initCliente = new Cliente("", "", new Date(""), usuario, "", 0);
+const initCliente = new Cliente("", "", new Date(""), null, usuario, "", 0);

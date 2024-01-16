@@ -10,6 +10,7 @@ public record ClienteDTO(
         Date dtaUpdateAt,
         long codCliente,
         String desNomeCompleto,
+        String numTelefone,
         String desCpf,
         Date dtaNascimento,
         UsuarioDTO usuairo

@@ -7,7 +7,7 @@
         left
         color="success"
         size="small"
-        v-on:click="goNovoUsuario()"
+        v-on:click="goFromTransacao()"
       >
         <v-icon icon="$plus" size="x-small"></v-icon>
         Agendar transação</v-btn
@@ -17,7 +17,7 @@
       <thead>
         <tr>
           <th class="text-left">#</th>
-          <th class="text-left">Nome</th>
+          <th class="text-left">Autor</th>
           <th class="text-left">Nun. Conta Origem</th>
           <th class="text-left">Nun. Conta Destido</th>
           <th class="text-left">Valor transação</th>
@@ -25,14 +25,21 @@
           <th class="text-left"></th>
         </tr>
       </thead>
-      <tbody>
-        <tr v-for="item in data" :key="item.uuid">
-          <td>{{ item.codTransacao }}</td>
-          <td>{{ item.desNome }}</td>
-          <td>{{ item.numContaOrigem }}</td>
-          <td>{{ item.numContaDestino }}</td>
-          <td>{{ item.numValTransferencia }}</td>
-          <td>{{ item.numValTaxaPrevista }}</td>
+      <tbody v-if="!!transacaoStore.transacaoList.length">
+        <tr
+          v-for="item in transacaoStore.transacaoList"
+          :key="item.transacao.uuid"
+        >
+          <td>{{ item.transacao.codTransacao }}</td>
+          <td>{{ item.transacao.clienteResponsavel?.desNomeCompleto }}</td>
+          <td>
+            {{ utils.formatarNumeroConta(item.transacao.codContaOrigem) }}
+          </td>
+          <td>
+            {{ utils.formatarNumeroConta(item.transacao.codContaDestico) }}
+          </td>
+          <td>{{ item.transacao.numValTransferencia }}</td>
+          <td>{{ item.transacao.numValTaxaPrevista }}</td>
           <dt><v-btn></v-btn></dt>
         </tr>
       </tbody>
@@ -42,20 +49,25 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useTransacaoStore } from "@stores/transacaoStore";
+import { useClienteStore } from "@stores/clienteStore";
+import { useUtils } from "@/models/utils";
+import { util } from "prettier";
 export default {
   setup() {
     const router = useRouter();
     const transacaoStore = useTransacaoStore();
-    const data = ref(transacaoStore.transacaoList.map((tra) => tra.transacao));
+    const clienteStore = useClienteStore();
+    const utils = useUtils();
 
     const fetchData = async () => {
-      transacaoStore.getAll();
+      await transacaoStore.getAllByClienteResponsavelUuid(
+        clienteStore.clienteLogado.uuid,
+      );
     };
-    const goNovoUsuario = () => {
-      console.log("chegou");
+    const goFromTransacao = () => {
       router.push({ name: "transacao-novo" });
     };
 
@@ -64,8 +76,9 @@ export default {
     });
 
     return {
-      data,
-      goNovoUsuario,
+      goFromTransacao,
+      transacaoStore,
+      utils,
     };
   },
 };

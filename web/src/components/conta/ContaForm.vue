@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="text-h5">Cadastro de Cliente</span>
+      <span class="text-h5">Cadastro de Conta Nova</span>
     </v-card-title>
     <v-card-text>
       <v-container>
@@ -11,8 +11,7 @@
               <v-text-field
                 v-model="desNome"
                 label="Nome completo*"
-                value="Daniel Figuieredo"
-                required
+                disabled
               ></v-text-field>
             </v-col>
 
@@ -20,25 +19,22 @@
               <v-text-field
                 v-model="desCpf"
                 label="CPF*"
-                :value="47995274826"
-                required
+                disabled
               ></v-text-field>
             </v-col>
             <v-col cols="12" sm="6" md="12">
               <v-text-field
                 v-model="dataNascimento"
                 label="Data de nascimento*"
-                value="1999-08-02"
                 type="date"
-                required
+                disabled
               ></v-text-field>
             </v-col>
             <v-col cols="12">
               <v-text-field
                 v-model="numTelefone"
-                value="11973829618"
                 label="Número de telefone*"
-                required
+                disabled
               ></v-text-field>
             </v-col>
           </v-row>
@@ -56,48 +52,36 @@
   </v-card>
 </template>
 <script>
-import { ref, defineEmits } from "vue";
+import { ref } from "vue";
 import { Cliente } from "@/models/cliente";
 import { useContaStore } from "@stores/contaStore";
 import { useClienteStore } from "@stores/clienteStore";
-import { useAuthenticationStore } from "@/stores/authenticationStore";
-import { useUtils } from "@/models/utils";
 
 export default {
-  setup(props, { emit }) {
-    const utils = useUtils();
+  setup(props) {
     const clienteStore = useClienteStore();
-    const authenticationStore = useAuthenticationStore();
-    const constaStore = useContaStore();
 
-    const desNome = ref("");
-    const desCpf = ref("");
-    const dataNascimento = ref("");
-    const numTelefone = ref("");
+    const contaStore = useContaStore();
+
+    const desNome = ref(clienteStore.clienteLogado.desNomeCompleto);
+    const desCpf = ref(clienteStore.clienteLogado.desCpf);
+    const dataNascimento = ref(
+      new Date(clienteStore.clienteLogado.dtaNascimento)
+        .toISOString()
+        .split("T")[0],
+    );
+    const numTelefone = ref(clienteStore.clienteLogado.numTelefone);
 
     const criarConta = async () => {
-      const cli = new Cliente(
-        desNome.value,
-        desCpf.value,
-        utils.convertStringToDate(dataNascimento.value),
-        numTelefone.value,
-        authenticationStore.userCorrente,
-      );
-      await constaStore.createPrimeiraConta(cli);
+      await contaStore.createConta(clienteStore.clienteLogado);
+    };
 
-      await clienteStore.setCliente(constaStore.contaCorrente.cliente);
-      emitFecharModal();
-    };
-    const emitFecharModal = () => {
-      emit("fecharModal", false); // Emite um evento para o pai
-    };
     return {
       desNome,
       desCpf,
       dataNascimento,
       numTelefone,
       criarConta,
-      emitFecharModal,
     };
   },
 };

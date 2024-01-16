@@ -1,5 +1,6 @@
 package com.transferschedule.api.controllers;
 
+import com.transferschedule.api.dtos.ContaDTO;
 import com.transferschedule.api.dtos.Converter;
 import com.transferschedule.api.dtos.TransacaoDTO;
 import com.transferschedule.api.models.Transacao;
@@ -12,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,10 +28,17 @@ public class TransacaoController {
     ClienteService clienteService;
 
 
-    @GetMapping(path = "/all")
-    public @ResponseBody Iterable<Transacao> getAll() {
-
-        return transacaoService.findAll();
+    @GetMapping(path = "/all-by-cliente-responsavel/{uuid}")
+    public @ResponseBody ResponseEntity<List<TransacaoDTO>> getAll(@PathVariable("uuid") String uuid) {
+        var transacaoList = transacaoService.findAllByClienteUuid(UUID.fromString(uuid));
+        if(!transacaoList.isEmpty()){
+            var listTransacaoDTO = new ArrayList<TransacaoDTO>();
+            transacaoList.forEach(tra -> {
+                listTransacaoDTO.add(Converter.convertTransacaoToDTO(tra));
+            });
+            return new ResponseEntity<List<TransacaoDTO>>(listTransacaoDTO, HttpStatus.OK);
+        }
+        return new ResponseEntity<List<TransacaoDTO>>(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(path = "/nova-transacao",

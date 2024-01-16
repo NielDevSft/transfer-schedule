@@ -13,8 +13,10 @@ public record TransacaoDTO(
         Date dtaTransacao,
         TIPOOPERACAO indTipoOperacao,
         String contaOrigemUuid,
+        Long codContaOrigem,
         String contaDestinoUuid,
-        String clienteResponsavelUuid,
+        Long codContaDestico,
+        ClienteDTO clienteResponsavel,
         Date dtaCreateAt,
         Date dtaUpdateAt,
         Date dtaDeleteAt

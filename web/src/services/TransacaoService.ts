@@ -11,10 +11,23 @@ export class TransacaoService {
   };
 
   public async create(transacao: Transacao): Promise<AxiosResponse<Transacao>> {
-    return axios.post(`${this.url}/nova-transacao`, transacao, this.config);
+    return axios.post(`${this.url}/nova-transacao`, transacao, {
+      headers: {
+        Authorization: sessionStorage.getItem("basicKey"),
+      },
+    });
   }
 
-  public async getAll(): Promise<AxiosResponse<Transacao[]>> {
-    return axios.get<Transacao[]>(`${this.url}/all`, this.config);
+  public async getAllByClienteResponsavelUuid(
+    uuid: string,
+  ): Promise<AxiosResponse<Transacao[]>> {
+    return axios.get<Transacao[]>(
+      `${this.url}/all-by-cliente-responsavel/${uuid}`,
+      {
+        headers: {
+          Authorization: sessionStorage.getItem("basicKey"),
+        },
+      },
+    );
   }
 }

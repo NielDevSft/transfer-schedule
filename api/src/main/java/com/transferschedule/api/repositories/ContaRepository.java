@@ -10,5 +10,5 @@ import java.util.UUID;
 
 public interface ContaRepository extends JpaRepository<Conta, UUID> {
     Optional<Conta> findFirstByOrderByDtaCreateAtDesc();
-    Optional<List<Conta>> findFirstByClienteUuid(UUID uuid);
+    List<Conta> findAllByClienteUuid(UUID uuid);
 }

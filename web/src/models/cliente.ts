@@ -4,6 +4,7 @@ export class Cliente {
     public desNomeCompleto: string | null,
     public desCpf: string | null,
     public dtaNascimento: Date | null,
+    public numTelefone: string | null,
     public usuairo: Usuario,
     public uuid?: string,
     public codCliente?: number,

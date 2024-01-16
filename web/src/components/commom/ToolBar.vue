@@ -30,7 +30,7 @@
               <v-card-text>
                 <v-select
                   v-model="contaSelecionada"
-                  :items="contaStore.contaList"
+                  :items="contaStore.contaList.map((con) => con.conta)"
                   label="Tipo de Operação"
                   item-title="contaLabel"
                   item-value="uuid"
@@ -50,7 +50,10 @@
       </div>
     </v-toolbar-title>
     <v-toolbar-items>
-      <v-btn v-if="clienteStore.clienteLogado.uuid" v-on:click="goTransacao"
+      <v-btn v-if="clienteStore.clienteLogado.uuid" v-on:click="goConta"
+        >Contas</v-btn
+      >
+      <v-btn v-if="contaStore.contaCorrente.uuid" v-on:click="goTransacao"
         >Transações</v-btn
       >
       <v-btn color="red" v-on:click="onLogout()">Logout</v-btn>
@@ -66,7 +69,7 @@ import { useAuthenticationStore } from "@stores/authenticationStore";
 import { useClienteStore } from "@stores/clienteStore";
 import { useContaStore } from "@stores/contaStore";
 import { useUtils } from "@/models/utils";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 export default {
   components: [ClienteForm],
@@ -88,6 +91,9 @@ export default {
     const goTransacao = () => {
       router.push({ name: "transacao" });
     };
+    const goConta = () => {
+      router.push({ name: "conta" });
+    };
     const onSelectConta = (isActive) => {
       fecharModal(isActive);
       contaStore.setContaCorrete(contaSelecionada.value);
@@ -96,9 +102,16 @@ export default {
     onMounted(() => {
       contaStore.getContaByClienteUuid(clienteStore.clienteLogado.uuid).then();
     });
+    watch(
+      () => clienteStore.clienteLogado,
+      (cli) => {
+        contaStore.getContaByClienteUuid(cli.uuid).then();
+      },
+    );
     return {
       onLogout,
       goTransacao,
+      goConta,
       fecharModal,
       clienteStore,
       contaStore,

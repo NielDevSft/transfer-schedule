@@ -6,6 +6,7 @@ export const useUtils = () => {
 
     return dateObject;
   };
+
   const formatarNumeroConta = (numero: string) => {
     let numeroTexto = numero.toString();
     return numeroTexto.padStart(6, "0");

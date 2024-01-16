@@ -53,7 +53,7 @@
               <v-text-field
                 v-model="codContaOrigem"
                 label="Código da Conta de Origem*"
-                required
+                disabled
               ></v-text-field>
             </v-col>
 
@@ -71,7 +71,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn text="Cancelar" color="red" v-on:click="emitFecharModal"></v-btn>
+      <v-btn text="Voltar" color="red" v-on:click="voltar"></v-btn>
       <v-btn color="blue-darken-1" variant="text" v-on:click="criarConta()">
         Criar
       </v-btn>
@@ -79,19 +79,22 @@
   </v-card>
 </template>
 <script>
-import { ref, defineEmits } from "vue";
+import { ref, watch } from "vue";
 import { Transacao } from "@/models/transacao";
 import { useContaStore } from "@stores/contaStore";
 import { useTransacaoStore } from "@stores/transacaoStore";
 import { useClienteStore } from "@stores/clienteStore";
 import { TIPOOPERACAO } from "@/models/transacao";
 import { useUtils } from "@models/utils";
+import { useRouter } from "vue-router";
 
 export default {
-  setup(props, { emit }) {
+  setup(props) {
     const utils = useUtils();
+    const router = useRouter();
     const clienteStore = useClienteStore();
     const transacaoStore = useTransacaoStore();
+    const contaStore = useContaStore();
 
     const uuid = ref("");
     const codTransacao = ref("");
@@ -99,10 +102,17 @@ export default {
     const numValTaxaPrevista = ref("");
     const dtaTransacao = ref("");
     const indTipoOperacao = ref("");
-    const codContaOrigem = ref("");
+    const codContaOrigem = ref(contaStore.contaCorrente.contaLabel);
+    watch(
+      () => contaStore.contaCorrente,
+      (cc) => {
+        codContaOrigem.value = cc.contaLabel;
+      },
+    );
+
     const codDestinoOrigem = ref("");
 
-    const tipoOperacaoOptions = ["A", "B", "C", "D"];
+    const tipoOperacaoOptions = ref(["A", "B", "C", "D"]);
 
     const criarConta = async () => {
       const tra = new Transacao(
@@ -112,18 +122,21 @@ export default {
         numValTaxaPrevista.value,
         utils.convertStringToDate(dtaTransacao.value),
         TIPOOPERACAO[indTipoOperacao.value],
-        codContaOrigem.value,
-        codDestinoOrigem.value,
+
         clienteStore.clienteLogado.uuid,
       );
-      await transacaoStore.createTransacao(tra);
 
-      await clienteStore.setCliente(constaStore.contaCorrente.cliente);
-      emitFecharModal();
+      await transacaoStore.createTransacao(
+        tra,
+        codDestinoOrigem.value,
+        codContaOrigem.value,
+      );
+
+      await clienteStore.setCliente(contaStore.contaCorrente.cliente);
     };
 
-    const emitFecharModal = () => {
-      emit("fecharModal", false);
+    const voltar = () => {
+      router.push({ name: "transacao" });
     };
     return {
       codTransacao,
@@ -133,8 +146,9 @@ export default {
       codContaOrigem,
       codDestinoOrigem,
       tipoOperacaoOptions,
+      contaStore,
       criarConta,
-      emitFecharModal,
+      voltar,
     };
   },
 };

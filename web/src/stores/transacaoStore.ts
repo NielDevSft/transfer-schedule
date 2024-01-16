@@ -10,12 +10,7 @@ const contaService = new ContaService();
 export const useTransacaoStore = defineStore("transacao", {
   state() {
     return {
-      transacaoStore: [
-        {
-          transacao: {} as Transacao,
-          selected: true,
-        },
-      ],
+      transacaoStore: [] as typeof initTransacao,
     };
   },
   actions: {
@@ -37,9 +32,10 @@ export const useTransacaoStore = defineStore("transacao", {
       }
     },
 
-    async getAll(cliUuid: string) {
+    async getAllByClienteResponsavelUuid(cliUuid: string) {
       try {
-        const response = await transacaoService.getAll();
+        const response =
+          await transacaoService.getAllByClienteResponsavelUuid(cliUuid);
         this.transacaoStore = response.data.map((tra) => {
           return { transacao: tra, selected: false };
         });
@@ -51,11 +47,16 @@ export const useTransacaoStore = defineStore("transacao", {
   getters: {
     transacaoCorrente(): Transacao {
       const con = this.transacaoStore.find((t) => t.selected);
-      return con ? con.transacao : initTransacao;
+      return con ? con.transacao : initTransacao[0].transacao;
     },
     transacaoList(): typeof this.transacaoStore {
       return this.transacaoStore;
     },
   },
 });
-const initTransacao = new Transacao("", 0, 0, 0, new Date(), "", "", "");
+const initTransacao = [
+  {
+    transacao: new Transacao("", 0, 0, 0, new Date(), "", "", ""),
+    selected: false,
+  },
+];

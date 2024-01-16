@@ -31,6 +31,9 @@ public class Cliente extends BaseEntity {
     @Column(name = "dta_nascimento")
     public Date dtaNascimento;
 
+    @Column(name = "num_telefone")
+    public String numTelefone;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_usuairo_uuid")
     private User usuairo;

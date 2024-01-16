@@ -73,6 +73,7 @@ import { useAuthenticationStore } from "@/stores/authenticationStore";
 export default {
   setup() {
     const userStore = useAuthenticationStore();
+
     const router = useRouter();
     const isLogin = ref(true);
     const emailLogin = ref("");

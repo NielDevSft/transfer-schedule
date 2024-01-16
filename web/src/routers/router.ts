@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Login from "@/components/Login.vue";
-import Transasao from "@/components/Transacao/Index.vue";
+import Transasao from "@/components/transacao/Index.vue";
+import Conta from "@/components/conta/Index.vue";
 import TransacaoForm from "@/components/transacao/TransacaoForm.vue";
+import ContaForm from "@/components/conta/ContaForm.vue";
 
 import MainContainer from "@/components/commom/MainContainer.vue";
 import { UserWithAuthorities } from "@/models/userWithAuthorities";
@@ -32,6 +34,29 @@ const routes: Array<RouteRecordRaw> = [
             path: "",
             name: "transacao",
             component: Transasao,
+            meta: { roles: ["ROLE_USER", "ROLE_ADMIN"] },
+          },
+        ],
+      },
+      {
+        path: "conta",
+        children: [
+          {
+            path: "novo",
+            name: "conta-novo",
+            component: ContaForm,
+            meta: { roles: ["ROLE_USER", "ROLE_ADMIN"] },
+          },
+          {
+            path: "edit",
+            name: "conta-edit",
+            component: ContaForm,
+            meta: { roles: ["ROLE_USER", "ROLE_ADMIN"] },
+          },
+          {
+            path: "",
+            name: "conta",
+            component: Conta,
             meta: { roles: ["ROLE_USER", "ROLE_ADMIN"] },
           },
         ],

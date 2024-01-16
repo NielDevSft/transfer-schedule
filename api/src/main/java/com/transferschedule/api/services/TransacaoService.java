@@ -14,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TransacaoService {
@@ -134,7 +135,7 @@ public class TransacaoService {
         transacao.setNumValTaxaPrevista(taxaCalculada);
     }
 
-    public List<Transacao> findAll() {
-        return this.transacaoRepository.findAll();
+    public List<Transacao> findAllByClienteUuid(UUID uuid) {
+        return this.transacaoRepository.findAllByClienteUuid(uuid);
     }
 }

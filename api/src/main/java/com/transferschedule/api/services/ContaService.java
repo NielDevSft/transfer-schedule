@@ -23,15 +23,13 @@ public class ContaService {
 
     public Conta create(Conta conta){
         conta.isValid();
-
-
         var lastCreated = this.findLastCreate();
         conta.setCodConta(1);
 
-        lastCreated.ifPresent(cli ->
-                conta.setCodConta(cli.getCodConta() + 1
-                ));
-        
+        lastCreated.ifPresent(cli -> {
+            conta.setCodConta(cli.getCodConta() + 1);
+        });
+
         return this.contaRepository.save(conta);
     }
 
@@ -46,8 +44,8 @@ public class ContaService {
         }));
     }
 
-    public Optional<List<Conta>> findByUuidCliente(String uuid) {
-        var contaList = contaRepository.findFirstByClienteUuid(UUID.fromString(uuid));
+    public List<Conta> findAllByUuidCliente(String uuid) {
+        var contaList = contaRepository.findAllByClienteUuid(UUID.fromString(uuid));
         return contaList;
     }
     public Optional<Conta> findById(UUID uuid){

@@ -42,18 +42,36 @@ export const useContaStore = defineStore("conta", {
         console.error("Erro ao buscar dados:", error);
       }
     },
+    async createConta(cliente: Cliente) {
+      try {
+        const response = await contaService.createConta(cliente);
+        this.contaStore.push({
+          conta: {
+            ...response.data,
+            contaLabel: utils.formatarNumeroConta(
+              response.data.codConta.toString(),
+            ),
+          },
+          selected: false,
+        });
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    },
     async getContaByClienteUuid(uuid: string) {
       try {
-        const response = await contaService.getAllByCliente(uuid);
-        this.contaStore = response.data.map((con) => {
-          return {
-            conta: {
-              ...con,
-              contaLabel: utils.formatarNumeroConta(con.codConta.toString()),
-            },
-            selected: false,
-          };
-        });
+        if (!this.contaStore.length || !this.contaStore[0].conta.uuid) {
+          const response = await contaService.getAllByCliente(uuid);
+          this.contaStore = response.data.map((con) => {
+            return {
+              conta: {
+                ...con,
+                contaLabel: utils.formatarNumeroConta(con.codConta.toString()),
+              },
+              selected: false,
+            };
+          });
+        }
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       }
@@ -82,14 +100,14 @@ export const useContaStore = defineStore("conta", {
       const con = this.contaStore.find((c) => c.selected);
       return con ? con.conta : initConta;
     },
-    contaList(): Conta[] {
-      return this.contaStore.map((cs) => cs.conta);
+    contaList(): typeof this.contaStore {
+      return this.contaStore;
     },
   },
 });
 
 const usuario = new Usuario(0, "", "", true);
-const cliente = new Cliente("", "", new Date(""), usuario, "", 0);
+const cliente = new Cliente("", "", new Date(""), null, usuario, "", 0);
 const initConta = new Conta(
   "",
   false,

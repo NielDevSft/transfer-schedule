@@ -38,10 +38,10 @@ public class ContaController {
 
     @GetMapping(path = "/all-by-cliente/{uuid}")
     public ResponseEntity<List<ContaDTO>> getByCodCliente(@PathVariable("uuid") String uuid) {
-        var conExisting = this.contaService.findByUuidCliente(uuid);
-        if (conExisting.isPresent()) {
+        var conExisting = this.contaService.findAllByUuidCliente(uuid);
+        if (!conExisting.isEmpty()) {
             var listContaDTO = new ArrayList<ContaDTO>();
-            conExisting.get().forEach(conta -> {
+            conExisting.forEach(conta -> {
                 listContaDTO.add(Converter.convertContaToDTO(conta));
             });
             return new ResponseEntity<List<ContaDTO>>(listContaDTO, HttpStatus.OK);
@@ -62,5 +62,19 @@ public class ContaController {
 
         var conta = contaService.create(newConta);
         return new ResponseEntity<ContaDTO>(Converter.convertContaToDTO(conta), HttpStatus.CREATED);
+    }
+    @PostMapping(path = "/",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ContaDTO> createConta(@RequestBody ClienteDTO cliente) {
+        var clientExisting = clienteService.findByUsuarioId(cliente.usuairo().id());
+        var newConta = new Conta();
+        if(clientExisting.isPresent()) {
+            newConta.setCliente(clientExisting.get());
+            var conta = contaService.create(newConta);
+            return new ResponseEntity<ContaDTO>(Converter.convertContaToDTO(conta), HttpStatus.CREATED);
+        }
+        return new ResponseEntity<ContaDTO>(HttpStatus.BAD_REQUEST);
+
     }
 }

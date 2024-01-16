@@ -13,21 +13,34 @@ export class ContaService {
   public async createPrimeiraConta(
     cliente: Cliente,
   ): Promise<AxiosResponse<Conta>> {
-    return axios.post<Conta>(
-      `${this.url}/primeira-conta`,
-      cliente,
-      this.config,
-    );
+    return axios.post<Conta>(`${this.url}/primeira-conta`, cliente, {
+      headers: {
+        Authorization: sessionStorage.getItem("basicKey"),
+      },
+    });
+  }
+  public async createConta(cliente: Cliente): Promise<AxiosResponse<Conta>> {
+    console.log("nada ", cliente);
+    return axios.post<Conta>(`${this.url}/`, cliente, {
+      headers: {
+        Authorization: sessionStorage.getItem("basicKey"),
+      },
+    });
   }
 
   public async getAllByCliente(uuid: string): Promise<AxiosResponse<Conta[]>> {
-    return axios.get<Conta[]>(
-      `${this.url}/all-by-cliente/${uuid}`,
-      this.config,
-    );
+    return axios.get<Conta[]>(`${this.url}/all-by-cliente/${uuid}`, {
+      headers: {
+        Authorization: sessionStorage.getItem("basicKey"),
+      },
+    });
   }
 
   public async getByCodigo(cod: number): Promise<AxiosResponse<Conta>> {
-    return axios.get<Conta>(`${this.url}/get-by-cod/${cod}`, this.config);
+    return axios.get<Conta>(`${this.url}/get-by-cod/${cod}`, {
+      headers: {
+        Authorization: sessionStorage.getItem("basicKey"),
+      },
+    });
   }
 }

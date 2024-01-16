@@ -18,6 +18,7 @@ public class Converter {
                 cliente.getDtaUpdateAt(),
                 cliente.getCodCliente(),
                 cliente.getDesNomeCompleto(),
+                cliente.getNumTelefone(),
                 cliente.getDesCpf(),
                 cliente.getDtaNascimento(),
                 convertUserToDTO(cliente.getUsuairo())
@@ -34,6 +35,7 @@ public class Converter {
         cliente.setCodCliente(clienteDTO.codCliente());
         cliente.setDesNomeCompleto(clienteDTO.desNomeCompleto());
         cliente.setDesCpf(clienteDTO.desCpf());
+        cliente.setNumTelefone(clienteDTO.numTelefone());
         cliente.setDtaNascimento(clienteDTO.dtaNascimento());
         cliente.setUsuairo(convertDTOToUser(clienteDTO.usuairo()));
         return cliente;
@@ -87,9 +89,11 @@ public class Converter {
                 transacao.getNumValTaxaPrevista(),
                 transacao.getDtaTransacao(),
                 transacao.getIndTipoOperacao(),
-                convertContaToDTO(transacao.getContaOrigem()).uuid(),
-                convertContaToDTO(transacao.getContaDestino()).uuid(),
-                transacao.getCliente().getUuid().toString(),
+                transacao.getContaOrigem().getUuid().toString(),
+                transacao.getContaOrigem().getCodConta(),
+                transacao.getContaDestino().getUuid().toString(),
+                transacao.getContaDestino().getCodConta(),
+                convertClienteToDTO(transacao.getCliente()),
                 transacao.getDtaCreateAt(),
                 transacao.getDtaUpdateAt(),
                 transacao.getDtaDeleteAt()
@@ -101,15 +105,17 @@ public class Converter {
                                                   ContaDTO[] contaDestino,
                                                   ClienteDTO[] clienteResponsavel) {
         var transacao = new Transacao();
-        transacao.setUuid(UUID.fromString(transacaoDTO.uuid()));
+        if(!transacaoDTO.uuid().isEmpty()){
+            transacao.setUuid(UUID.fromString(transacaoDTO.uuid()));
+        }
         transacao.setCodTransacao(transacaoDTO.codTransacao());
         transacao.setNumValTransferencia(transacaoDTO.numValTransferencia());
         transacao.setNumValTaxaPrevista(transacaoDTO.numValTaxaPrevista());
         transacao.setDtaTransacao(transacaoDTO.dtaTransacao());
         transacao.setIndTipoOperacao(transacaoDTO.indTipoOperacao());
-        transacao.setContaOrigem((contaOrigem.length > 0)? convertDTOToConta(contaOrigem[0]): null);
-        transacao.setContaDestino((contaDestino.length > 0)? convertDTOToConta(contaDestino[0]): null);
-        transacao.setCliente(convertDTOToCliente((clienteResponsavel.length > 0)?clienteResponsavel[0]: null));
+        transacao.setContaOrigem((contaOrigem != null && contaOrigem.length > 0)? convertDTOToConta(contaOrigem[0]): null);
+        transacao.setContaDestino((contaDestino != null && contaDestino.length > 0)? convertDTOToConta(contaDestino[0]): null);
+        transacao.setCliente((clienteResponsavel != null &&clienteResponsavel.length > 0)? convertDTOToCliente(clienteResponsavel[0]): null);
         transacao.setDtaCreateAt(transacaoDTO.dtaCreateAt());
         transacao.setDtaUpdateAt(transacaoDTO.dtaUpdateAt());
         transacao.setDtaDeleteAt(transacaoDTO.dtaDeleteAt());

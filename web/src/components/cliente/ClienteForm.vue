@@ -11,7 +11,6 @@
               <v-text-field
                 v-model="desNome"
                 label="Nome completo*"
-                value="Daniel Figuieredo"
                 required
               ></v-text-field>
             </v-col>
@@ -20,7 +19,6 @@
               <v-text-field
                 v-model="desCpf"
                 label="CPF*"
-                :value="47995274826"
                 required
               ></v-text-field>
             </v-col>
@@ -28,7 +26,6 @@
               <v-text-field
                 v-model="dataNascimento"
                 label="Data de nascimento*"
-                value="1999-08-02"
                 type="date"
                 required
               ></v-text-field>
@@ -36,7 +33,6 @@
             <v-col cols="12">
               <v-text-field
                 v-model="numTelefone"
-                value="11973829618"
                 label="Número de telefone*"
                 required
               ></v-text-field>

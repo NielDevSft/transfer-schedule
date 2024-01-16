@@ -3,7 +3,10 @@ import { UserWithAuthorities } from "@/models/userWithAuthorities";
 import Usuario from "@/models/usuario";
 import { defineStore } from "pinia";
 import { AuthenticationService } from "@/services/AuthenticationService";
+import { useToast } from "vue-toastification";
+
 const authenticationService = new AuthenticationService();
+const toast = useToast();
 
 export const useAuthenticationStore = defineStore("authentication", {
   state() {
@@ -23,8 +26,9 @@ export const useAuthenticationStore = defineStore("authentication", {
         const response = await authenticationService.login(userName, passWord);
         this.userStore = response.data;
         sessionStorage.setItem("userLogged", JSON.stringify(response.data));
+        toast.success("Login feito com sucesso");
       } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        toast.error("Usuário ou senha invalidos");
       }
     },
     logout() {

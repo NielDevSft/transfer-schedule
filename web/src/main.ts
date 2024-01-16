@@ -1,9 +1,3 @@
-/**
- * main.ts
- *
- * Bootstraps Vuetify and other plugins then mounts the App`
- */
-
 // Plugins
 import { registerPlugins } from "@/plugins";
 
@@ -12,14 +6,33 @@ import App from "./App.vue";
 
 // Composables
 import { createApp } from "vue";
-import { createPinia } from "pinia";
+import { createPinia, PiniaVuePlugin } from "pinia";
+import Toast from "vue-toastification";
+
+import "vue-toastification/dist/index.css";
 import router from "./routers/router";
 
-const pinia = createPinia();
+const options = {
+  position: "top-right",
+  timeout: 5000,
+  closeOnClick: true,
+  pauseOnFocusLoss: true,
+  pauseOnHover: true,
+  draggable: true,
+  draggablePercent: 0.6,
+  showCloseButtonOnHover: false,
+  hideProgressBar: true,
+  closeButton: "button",
+  icon: true,
+  rtl: false,
+};
 
+const pinia = createPinia();
 const app = createApp(App);
+app.use(PiniaVuePlugin);
 app.use(pinia);
 app.use(router);
+app.use(Toast, options);
 
 registerPlugins(app);
 

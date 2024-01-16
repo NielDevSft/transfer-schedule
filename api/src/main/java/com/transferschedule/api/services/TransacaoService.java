@@ -32,13 +32,10 @@ public class TransacaoService {
                 ));
 
         LocalDate hoje = LocalDate.now();
-        transacao.setDtaTransacao(new Date());
+
         long diferencaDias = calcularDiferencaDias(transacao.getDtaTransacao(), hoje);
 
-        var tipoOperacao = calcularTipoOperacao(transacao, diferencaDias)
-                .orElseThrow(() -> new IllegalArgumentException("Nenhuma taxa aplicável"));
-
-        switch (tipoOperacao) {
+        switch (transacao.getIndTipoOperacao()) {
             case A:
                 calcularTaxaTipoA(transacao, diferencaDias);
                 break;
@@ -57,34 +54,14 @@ public class TransacaoService {
 
         return transacaoRepository.save(transacao);
     }
-    public Optional<Transacao> findLastCreate(){
+
+    public Optional<Transacao> findLastCreate() {
         return this.transacaoRepository.findFirstByOrderByDtaCreateAtDesc();
     }
 
-    private Optional<TIPOOPERACAO> calcularTipoOperacao(Transacao transacao, long diferencaDias) {
-        if (diferencaDias == 0) {
-            transacao.setIndTipoOperacao(TIPOOPERACAO.A);
-        } else if (diferencaDias <= 10) {
-            transacao.setIndTipoOperacao(TIPOOPERACAO.B);
-        } else if (diferencaDias <= 20) {
-            transacao.setIndTipoOperacao(TIPOOPERACAO.C);
-            calcularTaxaTipoC(transacao, diferencaDias);
-        } else if (diferencaDias <= 30) {
-            transacao.setIndTipoOperacao(TIPOOPERACAO.C);
-            calcularTaxaTipoC(transacao, diferencaDias);
-        } else if (diferencaDias <= 40) {
-            transacao.setIndTipoOperacao(TIPOOPERACAO.C);
-            calcularTaxaTipoC(transacao, diferencaDias);
-        } else {
-            transacao.setIndTipoOperacao(TIPOOPERACAO.D);
-            calcularTaxaTipoD(transacao);
-        }
-
-        return Optional.ofNullable(transacao.getIndTipoOperacao());
-    }
     private long calcularDiferencaDias(Date dataTransferencia, LocalDate hoje) {
         LocalDate dataTransferenciaLocalDate = dataTransferencia.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        return ChronoUnit.DAYS.between(dataTransferenciaLocalDate, hoje);
+        return ChronoUnit.DAYS.between(hoje, dataTransferenciaLocalDate);
     }
 
     private void calcularTaxaTipoA(Transacao transacao, long diferencaDias) {
@@ -93,6 +70,8 @@ public class TransacaoService {
             BigDecimal taxaVariavel = transacao.getNumValTransferencia().multiply(BigDecimal.valueOf(0.03));
             BigDecimal taxa = taxaFixa.add(taxaVariavel);
             transacao.setNumValTaxaPrevista(taxa);
+        }else{
+            throw new IllegalArgumentException("Operações do tipo A precisam ser agendadas para o mesmo dia");
         }
     }
 
@@ -100,6 +79,8 @@ public class TransacaoService {
         if (diferencaDias <= 10) {
             BigDecimal taxaFixa = BigDecimal.valueOf(12);
             transacao.setNumValTaxaPrevista(taxaFixa);
+        }else{
+            throw new IllegalArgumentException("Operações do tipo B precisam ser agendadas para até 10 dias");
         }
     }
 

@@ -3,10 +3,12 @@ import { defineStore } from "pinia";
 
 import { TransacaoService } from "@/services/TransacaoService";
 import { ContaService } from "@/services/ContaService";
+import { useToast } from "vue-toastification";
+import { AxiosError } from "axios";
 
 const transacaoService = new TransacaoService();
 const contaService = new ContaService();
-
+const toast = useToast();
 export const useTransacaoStore = defineStore("transacao", {
   state() {
     return {
@@ -26,9 +28,19 @@ export const useTransacaoStore = defineStore("transacao", {
         transacao.contaOrigemUuid = conOrigem.uuid;
         transacao.contaDestinoUuid = conDestino.uuid;
         const response = await transacaoService.create(transacao);
-        this.transacaoStore = [{ transacao: response.data, selected: true }];
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        this.transacaoStore = [
+          ...this.transacaoStore,
+          { transacao: response.data, selected: false },
+        ];
+        toast.success(
+          `Transação ${response.data.codTransacao} criada com sucesso`,
+        );
+      } catch (error: any) {
+        if (error.response) {
+          toast.error(
+            `Falha ao criar transação: ${error.response.data.message}`,
+          );
+        }
       }
     },
 

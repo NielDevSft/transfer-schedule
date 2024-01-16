@@ -39,6 +39,10 @@
                 type="date"
                 required
               ></v-text-field>
+
+              <p>
+                Data selecionada: {{ formatDateString(dtaTransacao.value) }}
+              </p>
             </v-col>
 
             <v-col cols="12" sm="6" md="6">
@@ -59,7 +63,7 @@
 
             <v-col cols="12" sm="6" md="6">
               <v-text-field
-                v-model="codDestinoOrigem"
+                v-model="codContaDestino"
                 label="Código da Conta de Destino*"
                 required
               ></v-text-field>
@@ -72,7 +76,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn text="Voltar" color="red" v-on:click="voltar"></v-btn>
-      <v-btn color="blue-darken-1" variant="text" v-on:click="criarConta()">
+      <v-btn color="blue-darken-1" variant="text" v-on:click="criarTransacao()">
         Criar
       </v-btn>
     </v-card-actions>
@@ -96,6 +100,7 @@ export default {
     const transacaoStore = useTransacaoStore();
     const contaStore = useContaStore();
 
+    const formattedDate = ref(null);
     const uuid = ref("");
     const codTransacao = ref("");
     const numValTransferencia = ref("");
@@ -103,33 +108,50 @@ export default {
     const dtaTransacao = ref("");
     const indTipoOperacao = ref("");
     const codContaOrigem = ref(contaStore.contaCorrente.contaLabel);
+
     watch(
       () => contaStore.contaCorrente,
       (cc) => {
         codContaOrigem.value = cc.contaLabel;
       },
     );
+    watch(
+      () => transacaoStore.transacaoList,
+      () => {
+        router.push({ name: "transacao" });
+      },
+    );
 
-    const codDestinoOrigem = ref("");
+    const codContaDestino = ref("");
 
-    const tipoOperacaoOptions = ref(["A", "B", "C", "D"]);
+    const tipoOperacaoOptions = ref([
+      { title: "A", value: 1 },
+      { title: "B", value: 2 },
+      { title: "C", value: 3 },
+      { title: "D", value: 4 },
+    ]);
 
-    const criarConta = async () => {
+    const formatDateString = (date) => {
+      if (date) return date?.toLocaleDateString();
+    };
+
+    const criarTransacao = async () => {
       const tra = new Transacao(
         uuid.value,
         codTransacao.value,
         numValTransferencia.value,
         numValTaxaPrevista.value,
         utils.convertStringToDate(dtaTransacao.value),
-        TIPOOPERACAO[indTipoOperacao.value],
-
+        null,
+        null,
         clienteStore.clienteLogado.uuid,
+        TIPOOPERACAO[indTipoOperacao.value],
       );
 
       await transacaoStore.createTransacao(
         tra,
-        codDestinoOrigem.value,
         codContaOrigem.value,
+        codContaDestino.value,
       );
 
       await clienteStore.setCliente(contaStore.contaCorrente.cliente);
@@ -144,10 +166,13 @@ export default {
       numValTaxaPrevista,
       indTipoOperacao,
       codContaOrigem,
-      codDestinoOrigem,
+      codContaDestino,
       tipoOperacaoOptions,
       contaStore,
-      criarConta,
+      formattedDate,
+      dtaTransacao,
+      formatDateString,
+      criarTransacao,
       voltar,
     };
   },

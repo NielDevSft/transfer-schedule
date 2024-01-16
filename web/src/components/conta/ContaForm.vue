@@ -44,7 +44,11 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn text="Cancelar" color="red" v-on:click="emitFecharModal"></v-btn>
+      <v-btn
+        text="Cancelar"
+        color="red"
+        v-on:click="router.push({ name: 'conta' })"
+      ></v-btn>
       <v-btn color="blue-darken-1" variant="text" v-on:click="criarConta()">
         Criar
       </v-btn>
@@ -52,15 +56,15 @@
   </v-card>
 </template>
 <script>
-import { ref } from "vue";
-import { Cliente } from "@/models/cliente";
+import { ref, watch } from "vue";
 import { useContaStore } from "@stores/contaStore";
 import { useClienteStore } from "@stores/clienteStore";
+import { useRouter } from "vue-router";
 
 export default {
   setup(props) {
     const clienteStore = useClienteStore();
-
+    const router = useRouter();
     const contaStore = useContaStore();
 
     const desNome = ref(clienteStore.clienteLogado.desNomeCompleto);
@@ -76,11 +80,19 @@ export default {
       await contaStore.createConta(clienteStore.clienteLogado);
     };
 
+    watch(
+      () => contaStore.contaList,
+      (cc) => {
+        router.push({ name: "conta" });
+      },
+    );
+
     return {
       desNome,
       desCpf,
       dataNascimento,
       numTelefone,
+      router,
       criarConta,
     };
   },

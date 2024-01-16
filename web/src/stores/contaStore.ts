@@ -4,10 +4,13 @@ import Usuario from "@/models/usuario";
 import { useUtils } from "@/models/utils";
 import { ContaService } from "@/services/ContaService";
 import { defineStore } from "pinia";
-import { util } from "prettier";
+
+import { useToast } from "vue-toastification";
 
 const contaService = new ContaService();
+const toast = useToast();
 const utils = useUtils();
+
 export const useContaStore = defineStore("conta", {
   state() {
     const contaCorrente = JSON.parse(
@@ -38,24 +41,38 @@ export const useContaStore = defineStore("conta", {
           },
         ];
         sessionStorage.setItem("contaCorrente", JSON.stringify(response.data));
+        toast.success(
+          `Cliente criado com sucesso e conta padrão de número ${utils.formatarNumeroConta(
+            response.data.codConta.toString(),
+          )}`,
+        );
       } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        toast.error("Falha ao criar cliente");
+        console.error(error);
       }
     },
     async createConta(cliente: Cliente) {
       try {
         const response = await contaService.createConta(cliente);
-        this.contaStore.push({
-          conta: {
-            ...response.data,
-            contaLabel: utils.formatarNumeroConta(
-              response.data.codConta.toString(),
-            ),
+        this.contaStore = [
+          ...this.contaStore,
+          {
+            conta: {
+              ...response.data,
+              contaLabel: utils.formatarNumeroConta(
+                response.data.codConta.toString(),
+              ),
+            },
+            selected: false,
           },
-          selected: false,
-        });
+        ];
+        toast.success(
+          `Conta ${utils.formatarNumeroConta(
+            response.data.codConta.toString(),
+          )} criada com sucesso`,
+        );
       } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        toast.error("Falha ao criar conta");
       }
     },
     async getContaByClienteUuid(uuid: string) {

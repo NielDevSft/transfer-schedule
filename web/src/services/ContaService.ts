@@ -20,7 +20,6 @@ export class ContaService {
     });
   }
   public async createConta(cliente: Cliente): Promise<AxiosResponse<Conta>> {
-    console.log("nada ", cliente);
     return axios.post<Conta>(`${this.url}/`, cliente, {
       headers: {
         Authorization: sessionStorage.getItem("basicKey"),

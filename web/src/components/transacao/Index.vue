@@ -20,6 +20,9 @@
           <th class="text-left">Autor</th>
           <th class="text-left">Nun. Conta Origem</th>
           <th class="text-left">Nun. Conta Destido</th>
+          <th class="text-left">Tipo de Operaçao</th>
+          <th class="text-left">Data criação</th>
+          <th class="text-left">Data agendada</th>
           <th class="text-left">Valor transação</th>
           <th class="text-left">Taxa prevista</th>
           <th class="text-left"></th>
@@ -38,9 +41,15 @@
           <td>
             {{ utils.formatarNumeroConta(item.transacao.codContaDestico) }}
           </td>
+          <dh>{{ item.transacao.indTipoOperacao }}</dh>
+          <td>
+            {{ new Date(item.transacao.dtaCreateAt).toLocaleDateString() }}
+          </td>
+          <td>
+            {{ new Date(item.transacao.dtaTransacao).toLocaleDateString() }}
+          </td>
           <td>{{ item.transacao.numValTransferencia }}</td>
           <td>{{ item.transacao.numValTaxaPrevista }}</td>
-          <dt><v-btn></v-btn></dt>
         </tr>
       </tbody>
     </v-table>

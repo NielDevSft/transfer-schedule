@@ -20,7 +20,7 @@ services:
     depends_on:
       - api
     build:
-      context: ./app
+      context: ./web
       dockerfile: Dockerfile
     ports:
       - 4200:80
@@ -43,7 +43,7 @@ services:
       - spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
     networks:
       springboot-mysql-net:
-    restart: on-failure'
+    restart: on-failure
 
 networks:
   springboot-mysql-net:

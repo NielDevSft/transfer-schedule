@@ -22,6 +22,8 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
+    env_file:
+      - ./web/.env.production
     ports:
       - 4200:80
     networks:

@@ -4,7 +4,7 @@ import { Conta } from "@/models/conta";
 import axios, { AxiosResponse } from "axios";
 
 export class ContaService {
-  url = "http://localhost:8080/conta";
+  url = `${import.meta.env.VITE_BASE_URL}/conta`;
   config = {
     headers: {
       Authorization: sessionStorage.getItem("basicKey"),

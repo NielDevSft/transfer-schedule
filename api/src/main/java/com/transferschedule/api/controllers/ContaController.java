@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/conta", produces = {"application/json"})
+@RequestMapping(path = "/api/conta", produces = {"application/json"})
+@CrossOrigin(origins = "http://localhost:4200")
 public class ContaController {
     @Autowired
     private ContaService contaService;

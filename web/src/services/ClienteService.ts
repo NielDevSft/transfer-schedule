@@ -3,7 +3,7 @@ import { Cliente } from "@/models/cliente";
 import axios, { AxiosResponse } from "axios";
 
 export class ClienteService {
-  url = "http://localhost:8080/cliente";
+  url = `${import.meta.env.VITE_BASE_URL}/cliente`;
   config = {
     headers: {
       Authorization: sessionStorage.getItem("basicKey"),

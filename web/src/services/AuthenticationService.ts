@@ -3,7 +3,7 @@ import { UserWithAuthorities } from "@/models/userWithAuthorities";
 import axios, { AxiosResponse } from "axios";
 
 export class AuthenticationService {
-  url = "http://localhost:8080/authentication";
+  url = `${import.meta.env.VITE_BASE_URL}/authentication`;
 
   public async login(
     userName: string,

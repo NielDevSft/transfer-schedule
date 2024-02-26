@@ -3,7 +3,7 @@ import { Transacao } from "@/models/transacao";
 import axios, { AxiosResponse } from "axios";
 
 export class TransacaoService {
-  url = "http://localhost:8080/transacao";
+  url = `${import.meta.env.VITE_BASE_URL}/transacao`;
   config = {
     headers: {
       Authorization: sessionStorage.getItem("basicKey"),

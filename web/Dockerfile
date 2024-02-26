@@ -1,13 +1,16 @@
-# estágio de compilação
-FROM node:lts-alpine as build-stage
+FROM node:alpine as builder
+
 WORKDIR /app
-COPY package*.json  yarn.lock ./
-RUN yarn 
+COPY package.json yarn.lock ./
+ENV CI=1
+RUN yarn install --frozen-lockfile
+
 COPY . .
 RUN yarn build
 
-# estágio de produção
-FROM nginx:stable-alpine as production-stage
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Deploy our Angular app to NGINX
+FROM nginx:alpine
+
+RUN mkdir /app
+COPY --from=builder /app/dist /app
+COPY nginx.conf /etc/nginx/nginx.conf

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "/transacao")
+@RequestMapping(path = "/api/transacao")
 public class TransacaoController {
     @Autowired
     TransacaoService transacaoService;
@@ -44,6 +44,7 @@ public class TransacaoController {
     @PostMapping(path = "/nova-transacao",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<TransacaoDTO> novaTransacao(@RequestBody TransacaoDTO transacaoDTO,
                                                       @RequestHeader("Authorization") String authorizationHeader) {
         String base64Credentials = authorizationHeader.substring("Basic".length()).trim();

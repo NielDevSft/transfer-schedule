@@ -10,7 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/cliente", produces = {"application/json"})
+@RequestMapping(path = "/api/cliente", produces = {"application/json"})
+@CrossOrigin(origins = "http://localhost:4200")
 public class ClienteController {
     @Autowired
     private ClienteService clienteService;

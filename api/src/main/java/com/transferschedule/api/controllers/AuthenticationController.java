@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/authentication", produces = {"application/json"})
+@RequestMapping(path = "/api/authentication", produces = {"application/json"})
 public class AuthenticationController {
     @Autowired
     private AuthenticationService authenticationService;
@@ -21,6 +21,7 @@ public class AuthenticationController {
     @PostMapping(path = "/login",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<UserLogged> login(@RequestHeader("Authorization") String authorizationHeader) {
         String base64Credentials = authorizationHeader.substring("Basic".length()).trim();
         String credentials = new String(java.util.Base64.getDecoder().decode(base64Credentials));
